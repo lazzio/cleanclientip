@@ -28,10 +28,10 @@ func TestCleanClientIp(t *testing.T) {
 	}
 
 	// Test with multiple IPs in X-Forwarded-For header
-	req.Header.Set("X-Forwarded-For", "10.0.0.1:1234, 10.0.0.2, 10.0.0.3:5678, 10.0.0.4")
+	req.Header.Set("X-Forwarded-For", "10.0.0.1:1234,10.0.0.2,10.0.0.3:5678,10.0.0.4")
 
 	handler.ServeHTTP(recorder, req)
-	assertHeader(t, req, "X-Forwarded-For", "10.0.0.1, 10.0.0.2, 10.0.0.3, 10.0.0.4")
+	assertHeader(t, req, "X-Forwarded-For", "10.0.0.1,10.0.0.2,10.0.0.3,10.0.0.4")
 	assertHeader(t, req, "X-Real-Ip", "10.0.0.1")
 }
 

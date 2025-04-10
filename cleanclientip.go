@@ -52,7 +52,7 @@ func (a *CleanClientIp) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	req.RemoteAddr = ips[0]
 
 	// Set the X-Forwarded-For header to the cleaned IPs
-	req.Header.Set("X-Forwarded-For", strings.Join(ips, ", "))
+	req.Header.Set("X-Forwarded-For", strings.Join(ips, ","))
 
 	// Set the X-Real-Ip header to the first IP address
 	req.Header.Set("X-Real-Ip", ips[0])
