@@ -1,0 +1,9 @@
+displayName: Clean client IPs
+type: middleware
+iconPath: .assets/icon.png
+
+import: github.com/lazzio/cleanclientip
+
+summary: 'Clean Client IPs from X-Forwarded-For header'
+
+testData: {}
