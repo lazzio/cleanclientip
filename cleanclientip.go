@@ -34,29 +34,31 @@ func (a *CleanClientIp) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// X-Forwarded-For can contain multiple IPs, we only want the first one
 	ips := strings.Split(xff, ",")
 	if len(ips) == 0 {
 		a.next.ServeHTTP(rw, req)
 		return
 	}
 
-	// Get each IP address and remove ports
+	// Clean IPs by removing spaces and ports
+	// and store them in cleanedIPs
+	cleanedIPs := make([]string, len(ips))
 	for i, ip := range ips {
 		ip = strings.TrimSpace(ip)
-		// Remove port if present
-		ips[i] = strings.Split(ip, ":")[0]
+		// Enlever le port s'il est présent
+		cleanedIPs[i] = strings.Split(ip, ":")[0]
 	}
 
-	// Set the first IP address as the remote address
-	req.RemoteAddr = ips[0]
+	// Update X-Forwarded-For header with cleaned IPs
+	req.Header.Set("X-Forwarded-For", strings.Join(cleanedIPs, ", "))
 
-	// Set the X-Forwarded-For header to the cleaned IPs
-	req.Header.Set("X-Forwarded-For", strings.Join(ips, ","))
-
-	// Set the X-Real-Ip header to the first IP address
-	req.Header.Set("X-Real-Ip", ips[0])
+	// Set X-Real-Ip header with the first cleaned IP
+	req.Header.Set("X-Real-Ip", cleanedIPs[0])
 
 	// Call the next handler
+	// Pass the modified request to the next handler
+	// This is important to ensure that the changes are reflected in the request
+	// that is passed to the next handler
+	// and that the original request is not modified.
 	a.next.ServeHTTP(rw, req)
 }
